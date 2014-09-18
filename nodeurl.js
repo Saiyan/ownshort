@@ -3,9 +3,11 @@
 var http = require('http');
 var path = require('path');
 var url = require('url');
+var fs = require('fs');
 var crypto = require('crypto');
 var sqlite3 = require('sqlite3').verbose();
 var db = new sqlite3.Database("url-db");
+
 var PORT = 9080;
 
 db.serialize(function() {
@@ -14,13 +16,26 @@ db.serialize(function() {
 });
 var selquery = "SELECT * FROM urls WHERE short = ?";
 
+function serveFavicon(res){
+    res.writeHead(200, {
+        'Content-Type': 'image/x-icon;'
+    });
+    fs.readFile("favicon.ico",function(err,data){
+        res.end(data);
+    });
+}
 
 http.createServer(function(req, res) {
     
     var is_local = url.parse(req.url).host ? "" : "localhost:"+PORT + "/";
     var url_parts = url.parse(req.url, true);
     var shorturl = url_parts.pathname.replace("/","");
-        
+
+    if(url_parts.pathname === "/favicon.ico"){
+        serveFavicon(res);
+        return;
+    }
+
     if(shorturl){
         db.get(selquery,shorturl.toString(),function(err, row) {
             if(row && row.url){
@@ -57,10 +72,16 @@ http.createServer(function(req, res) {
                 'Content-Type': 'text/html; charset=UTF-8'
             });
             res.end('\
-                <form method="GET" action="/">\
-                    <input type="text" name="url" /> <br/>\n\
-                    <button>Shorten!</button>\
-                </form>');
+                <html>\
+                    <head>\
+                        <link rel="icon" type="image/x-icon" href="/favicon.ico" />\
+                    </head>\
+                    <body></body>\
+                    <form method="GET" action="/">\
+                        <input type="text" name="url" /> <br/>\n\
+                        <button>Shorten!</button>\
+                    </form>\n\
+                </html>');
         }
     }
     

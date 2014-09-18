@@ -1,0 +1,23 @@
+{
+  "name" : "nodeurl",
+  "version" : "0.0.1",
+  "main" : "./nodeurl.js",
+  "author" : {
+    "name" : "saiyan",
+    "email" : "saiyan@cssai.eu"
+  },
+  "keywords" : [ ],
+  "licenses" : {
+    "type" : "none"
+  },
+  "repository" : {
+    "type" : "git",
+    "url" : "git://github.com/Saiyan/nodeurl.git"
+  },
+  "bugs" : {
+    "url" : "http://github.com/Saiyan/nodeurl/issues"
+  },
+  "license" : {
+    "type" : "mit"
+  }
+}
