@@ -10,7 +10,8 @@ var url = require('url');
 var fs = require('fs');
 var crypto = require('crypto');
 var sqlite3 = require('sqlite3').verbose();
-var db = new sqlite3.Database("url-db");
+
+var db = new sqlite3.Database(config.db.filename);
 
 db.serialize(function () {
     //db.run("Drop TABLE urls");

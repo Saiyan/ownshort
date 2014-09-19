@@ -5,8 +5,10 @@ var config = {
     },
     files:{
         favicon: 'favicon.ico'
+    },
+    db:{
+        filename:"urls.sqlite3"
     }
 };
-
 module.exports = config;
 
