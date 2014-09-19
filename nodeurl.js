@@ -92,8 +92,8 @@ function insertUrl(urlquery, req, res) {
         if (row && row.url !== urlquery.url) {
             res.end("Sorry there was a hash collision in the Database.");
         } else {
-            var u = req.headers.host + "/" + short;
-            res.end('<a href="/' + short + '">' + u.href + '</a>');
+            var u = "http://" + req.headers.host + "/" + short;
+            res.end('<a href="/' + short + '">' + u + '</a>');
         }
     });
 }
