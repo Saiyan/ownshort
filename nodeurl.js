@@ -18,6 +18,11 @@ db.serialize(function () {
     db.run(queries.create);
 });
 
+ensureProtocol("https://www.google.de/");
+ensureProtocol("git://www.google.de/");
+ensureProtocol("http://www.google.de/");
+ensureProtocol("www.google.de");
+
 
 http.createServer(function (req, res) {
     var url_parts = url.parse(req.url, true);
@@ -67,6 +72,16 @@ function serveFavicon(res) {
     });
 }
 
+function ensureProtocol(url){
+    var regex = /\w+:\/\//;
+    var result = regex.exec(url);
+    if(result && result.index === 0){
+        return url;
+    }else{
+        return "http://"+url;
+    }
+}
+
 function doRedirectFromShorturl(shorturl, res) {
     db.get(queries.selectByShort, shorturl.toString(), function (err, row) {
         if (row && row.url) {
@@ -87,10 +102,15 @@ function insertUrl(urlquery, req, res) {
     var short = shasum.digest('hex');
     short = short.substring(0, 6);
     db.get(queries.selectByShort, short, function (err, row) {
+        var u = ensureProtocol(urlquery.url);
         if (!err && !row) {
-            db.run(queries.insertUrl, urlquery.url, short);
+            if(url.parse(u)){
+                db.run(queries.insertUrl, u, short);
+            }else{
+                res.end("Sorry you didn't enter a URL.");
+            }
         }
-        if (row && row.url !== urlquery.url) {
+        if (row && row.url !== u) {
             res.end("Sorry there was a hash collision in the Database.");
         } else {
             var u = "http://" + req.headers.host + "/" + short;
