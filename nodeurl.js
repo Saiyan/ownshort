@@ -5,6 +5,7 @@ var queries = require('./queries');
 var templates = require('./templates');
 
 var http = require('http');
+var https = require('https');
 var path = require('path');
 var url = require('url');
 var fs = require('fs');
@@ -18,13 +19,19 @@ db.serialize(function () {
     db.run(queries.create);
 });
 
-ensureProtocol("https://www.google.de/");
-ensureProtocol("git://www.google.de/");
-ensureProtocol("http://www.google.de/");
-ensureProtocol("www.google.de");
+
+if(config.https.enabled && config.https.keyfile && config.https.certfile){
+    config.https.key = fs.readFileSync(config.https.keyfile);
+    config.https.cert =  fs.readFileSync(config.https.certfile);
+    https.createServer(config.https,initServer).listen(config.https.port, "");
+}
+if(config.http.enabled, config.http.port){
+    http.createServer(initServer).listen(config.http.port, "");
+}
 
 
-http.createServer(function (req, res) {
+function initServer(req,res){
+    var isHttps = req.connection.encrypted ? true : false;
     var url_parts = url.parse(req.url, true);
     var shorturl = url_parts.pathname.replace("/", "");
 
@@ -38,7 +45,7 @@ http.createServer(function (req, res) {
     } else {
         var query = url_parts.query;
         if (query.url && url.parse(query.url)) {
-            insertUrl(query,req,res);
+            insertUrl(query,req,res,isHttps);
         } else {
             res.writeHead(200, {
                 'Content-Type': 'text/html; charset=UTF-8'
@@ -46,8 +53,7 @@ http.createServer(function (req, res) {
             res.end(getHtml());
         }
     }
-
-}).listen(config.http.port, "");
+}
 
 function getHtml(){
     var regex = new RegExp(/<% (\w+) %>/g);
@@ -96,7 +102,7 @@ function doRedirectFromShorturl(shorturl, res) {
 }
 
 
-function insertUrl(urlquery, req, res) {
+function insertUrl(urlquery, req, res,isHttps) {
     var shasum = crypto.createHash('sha512');
     shasum.update(urlquery.url);
     var short = shasum.digest('hex');
@@ -113,7 +119,8 @@ function insertUrl(urlquery, req, res) {
         if (row && row.url !== u) {
             res.end("Sorry there was a hash collision in the Database.");
         } else {
-            var u = "http://" + req.headers.host + "/" + short;
+            var protoc = isHttps ? "https://" : "http://";
+            var u = protoc + req.headers.host + "/" + short;
             res.end('<a href="/' + short + '">' + u + '</a>');
         }
     });
