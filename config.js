@@ -1,14 +1,14 @@
 
 var config = {
     http:{
-        enabled: false,
+        enabled: true,
         port: 9080
     },
     https: {
-        enabled: true,
+        enabled: false,
         port: 9081,
-        keyfile: "",
-        certfile: ""
+        keyfile: "../temp/server.key",
+        certfile: "../temp/server.crt"
     },
     files:{
         favicon: 'favicon.ico'
