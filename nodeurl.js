@@ -29,6 +29,48 @@ if(config.http.enabled, config.http.port){
     http.createServer(initServer).listen(config.http.port, "");
 }
 
+function serveFile(url,res){
+    var pathname = url.pathname;
+    var fileRegEx = RegExp(/\w+\.(\w+)$/).exec(pathname);
+    var folder = "assets";
+    
+    if(!fileRegEx) return false;
+    
+    while(pathname.indexOf("/") === 0){
+        pathname = pathname.replace("/","");
+    }
+    
+    switch(fileRegEx[1]){
+        case 'js':
+            folder = "js";
+            res.writeHead(200, {
+                'Content-Type': 'text/javascript; charset=UTF-8'
+            });
+            break;
+        case 'css':
+            folder = "css";
+            res.writeHead(200, {
+                'Content-Type': 'text/css; charset=UTF-8'
+            });
+            break;
+         case 'gif':
+            folder = "img";
+            res.writeHead(200, {
+                'Content-Type': 'image/gif;'
+            });
+            break;
+    }
+    var filepath = path.join(folder,pathname);
+    
+    if(fs.existsSync(filepath)){
+        var file = fs.readFileSync(filepath);
+        if(file){
+            res.end(file);
+            return true;
+        }
+    }
+    return false;
+}
 
 function initServer(req,res){
     var isHttps = req.connection.encrypted ? true : false;
@@ -37,6 +79,10 @@ function initServer(req,res){
 
     if (url_parts.pathname === "/favicon.ico") {
         serveFavicon(res);
+        return;
+    }
+    
+    if(serveFile(url_parts,res)){
         return;
     }
 
@@ -121,7 +167,10 @@ function insertUrl(urlquery, req, res,isHttps) {
         } else {
             var protoc = isHttps ? "https://" : "http://";
             var u = protoc + req.headers.host + "/" + short;
-            res.end('<a href="/' + short + '">' + u + '</a>');
+            res.writeHead(200, {
+                'Content-Type': 'text/plain; charset=UTF-8'
+            });
+            res.end(u);
         }
     });
 }
