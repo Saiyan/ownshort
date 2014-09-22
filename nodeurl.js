@@ -2,7 +2,6 @@
 
 var config = require('./config');
 var queries = require('./queries');
-var templates = require('./templates');
 
 var http = require('http');
 var https = require('https');
@@ -13,6 +12,7 @@ var crypto = require('crypto');
 var sqlite3 = require('sqlite3').verbose();
 
 var db = new sqlite3.Database(config.db.filename);
+var _theme = "";
 
 db.serialize(function () {
     //db.run("Drop TABLE urls");
@@ -93,26 +93,30 @@ function initServer(req,res){
         if (query.url && url.parse(query.url)) {
             insertUrl(query,req,res,isHttps);
         } else {
-            res.writeHead(200, {
-                'Content-Type': 'text/html; charset=UTF-8'
-            });
-            res.end(getHtml());
+            if(config.frontend.disabled){
+                res.writeHead(404, {
+                    'Content-Type': 'text/plain; charset=UTF-8'
+                });
+                res.end("404. Not Found");
+            }else{
+                res.writeHead(200, {
+                    'Content-Type': 'text/html; charset=UTF-8'
+                });
+                res.end(getThemeHtml());
+            }
         }
     }
 }
 
-function getHtml(){
-    var regex = new RegExp(/<% (\w+) %>/g);
-    var html = templates.frame;
-    var template_name = "";
-    
-    while(result = regex.exec(html)){
-        var template_name = result[1];
-        if(templates[template_name]){
-            html = html.replace(result[0],templates[template_name]);
-        }
+function getThemeHtml(){
+    if(_theme){
+         return _theme;
+     }else{
+        var themepath = path.join("themes", config.frontend.theme.active,"index.html");
+        var html = fs.readFileSync(themepath);
+        if(config.frontend.theme.loadonce) _theme = html;
+        return html;
     }
-    return html;
 }
 
 function serveFavicon(res) {

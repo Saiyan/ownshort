@@ -15,6 +15,13 @@ var config = {
     },
     db:{
         filename:"urls.sqlite3"
+    },
+    frontend:{
+        theme: {
+            active: 'simple',
+            loadonce: true
+        },
+        disabled: false
     }
 };
 
