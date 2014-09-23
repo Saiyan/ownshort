@@ -53,12 +53,17 @@ function serveFile(url,res){
                 'Content-Type': 'text/css; charset=UTF-8'
             });
             break;
-         case 'gif':
+        case 'gif':
             folder = "img";
             res.writeHead(200, {
                 'Content-Type': 'image/gif;'
             });
             break;
+        case 'ico':
+            folder = "img";
+            res.writeHead(200, {
+                'Content-Type': 'image/x-icon;'
+            });
     }
     var filepath = path.join(__dirname,folder,pathname);
     
@@ -77,11 +82,6 @@ function initServer(req,res){
     var url_parts = url.parse(req.url, true);
     var shorturl = url_parts.pathname.replace("/", "");
 
-    if (url_parts.pathname === "/favicon.ico") {
-        serveFavicon(res);
-        return;
-    }
-    
     if(serveFile(url_parts,res)){
         return;
     }
