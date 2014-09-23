@@ -21,8 +21,8 @@ db.serialize(function () {
 
 
 if(config.https.enabled && config.https.keyfile && config.https.certfile){
-    config.https.key = fs.readFileSync(config.https.keyfile);
-    config.https.cert =  fs.readFileSync(config.https.certfile);
+    config.https.key = fs.readFileSync(path.join(__dirname,config.https.keyfile));
+    config.https.cert =  fs.readFileSync(path.join(__dirname,config.https.certfile));
     https.createServer(config.https,initServer).listen(config.https.port, "");
 }
 if(config.http.enabled, config.http.port){
@@ -60,7 +60,7 @@ function serveFile(url,res){
             });
             break;
     }
-    var filepath = path.join(folder,pathname);
+    var filepath = path.join(__dirname,folder,pathname);
     
     if(fs.existsSync(filepath)){
         var file = fs.readFileSync(filepath);
@@ -112,7 +112,7 @@ function getThemeHtml(){
     if(_theme){
          return _theme;
      }else{
-        var themepath = path.join("themes", config.frontend.theme.active,"index.html");
+        var themepath = path.join(__dirname,"themes", config.frontend.theme.active,"index.html");
         var html = fs.readFileSync(themepath);
         if(config.frontend.theme.loadonce) _theme = html;
         return html;
@@ -123,7 +123,7 @@ function serveFavicon(res) {
     res.writeHead(200, {
         'Content-Type': 'image/x-icon;'
     });
-    fs.readFile(config.files.favicon, function (err, data) {
+    fs.readFile(path.join(__dirname,config.files.favicon), function (err, data) {
         res.end(data);
     });
 }
