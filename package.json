@@ -1,7 +1,7 @@
 {
-  "name" : "nodeurl",
+  "name" : "ownshort",
   "version" : "0.0.1",
-  "main" : "./nodeurl.js",
+  "main" : "./ownshort.js",
   "author" : {
     "name" : "saiyan",
     "email" : "saiyan@cssai.eu"
@@ -12,10 +12,10 @@
   },
   "repository" : {
     "type" : "git",
-    "url" : "git://github.com/Saiyan/nodeurl.git"
+    "url" : "git://github.com/Saiyan/ownshort.git"
   },
   "bugs" : {
-    "url" : "http://github.com/Saiyan/nodeurl/issues"
+    "url" : "http://github.com/Saiyan/ownshort/issues"
   },
   "license" : {
     "type" : "mit"
