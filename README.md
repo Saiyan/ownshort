@@ -12,12 +12,17 @@ This is ownshort.
     cd ownshort
     npm install sqlite3
 
-##Running the server
+##Usage
 
     nodejs /path/to/ownshort/ownshort.js
 
-now you can access the frontend under http://localhost:9080
+Now you can access the frontend under http://localhost:9080
+
+To get a shorturl for specific URL call: http://localhost:9080/?url=URL
+This returns the shorturl in plain text.
+
+The frontend uses this method to get the shorturl via AJAX call can be disabled in the config.js.
+
 
 ##Options
 Adjust the config.js file to your needs
-
