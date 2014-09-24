@@ -19,5 +19,13 @@
   },
   "license" : {
     "type" : "mit"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+   "devDependencies": {
+    "mocha": "~1.21.4",
+    "sqlite3": "*",
+    "assert": "*"
   }
 }
