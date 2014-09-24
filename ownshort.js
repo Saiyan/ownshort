@@ -13,33 +13,34 @@ var sqlite3 = require('sqlite3').verbose();
 
 var db = new sqlite3.Database(config.db.filename);
 var _theme = "";
-
+var server = null;
 db.serialize(function () {
     //db.run("Drop TABLE urls");
     db.run(queries.create);
 });
 
 
+
 if(config.https.enabled && config.https.keyfile && config.https.certfile){
     config.https.key = fs.readFileSync(path.join(__dirname,config.https.keyfile));
     config.https.cert =  fs.readFileSync(path.join(__dirname,config.https.certfile));
-    https.createServer(config.https,initServer).listen(config.https.port, "");
+    this.server = https.createServer(config.https,initServer).listen(config.https.port, "");
 }
 if(config.http.enabled, config.http.port){
-    http.createServer(initServer).listen(config.http.port, "");
+    this.server = http.createServer(initServer).listen(config.http.port, "");
 }
 
 function serveFile(url,res){
     var pathname = url.pathname;
     var fileRegEx = RegExp(/\w+\.(\w+)$/).exec(pathname);
     var folder = "assets";
-    
+
     if(!fileRegEx) return false;
-    
+
     while(pathname.indexOf("/") === 0){
         pathname = pathname.replace("/","");
     }
-    
+
     switch(fileRegEx[1]){
         case 'js':
             folder = "js";
@@ -66,7 +67,7 @@ function serveFile(url,res){
             });
     }
     var filepath = path.join(__dirname,folder,pathname);
-    
+
     if(fs.existsSync(filepath)){
         var file = fs.readFileSync(filepath);
         if(file){

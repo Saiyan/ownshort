@@ -19,5 +19,8 @@
   },
   "license" : {
     "type" : "mit"
+  },
+  "scripts": {
+    "test": "mocha"
   }
 }
