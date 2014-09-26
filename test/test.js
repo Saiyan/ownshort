@@ -13,8 +13,17 @@ describe('Server started', function () {
                 assert.equal(200, res.statusCode);
                 done();
             });
-        }else if(config.https.enabled){
-            https.get('https://localhost:'+config.https.port, function (res) {
+        }
+        if(config.https.enabled){
+            https.request({
+                host: 'localhost', 
+                port: config.https.port,
+                path: '/',
+                method: 'GET',
+                rejectUnauthorized: false,
+                requestCert: true,
+                agent: false
+            },function (res) {
                 assert.equal(200, res.statusCode);
                 done();
             });

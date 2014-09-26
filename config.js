@@ -7,10 +7,10 @@ var config = {
     },
     //Settings for the HTTPS server
     https: {
-        enabled: false,
+        enabled: true,
         port: 9081,
-        keyfile: "../temp/server.key",
-        certfile: "../temp/server.crt"
+        keyfile: "./ssl/server.key",
+        certfile: "./ssl/server.crt"
     },
     //Database settings
     db:{
@@ -21,7 +21,7 @@ var config = {
         theme: {
             //name of the folder for the active theme (e.g. "simple" loads themes/simple/)
             active: 'simple',
-            
+             
             //If this option is enabled the server will load the theme only on startup.
             //This could be handy if you are developing your own theme and dont want to restart the server everytime you make a change.
             loadonce: true
