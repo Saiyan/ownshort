@@ -21,11 +21,13 @@
     "type" : "mit"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha test"
   },
    "devDependencies": {
     "mocha": "~1.21.4",
     "sqlite3": "*",
-    "assert": "*"
+    "assert": "*",
+    "forever": "*",
+    "forever-monitor": "*"
   }
 }
